@@ -26,7 +26,8 @@ def setup_logging(verbose):
 )
 @click.option("--verbose", is_flag=True, help="Enable verbose logging")
 def main(xml_files, output, verbose):
-    """XML_FILES: List of files to process in the order of increasing priority"""
+    """XML_FILES: List of files to process in the order of increasing priority.
+    Any OVAL data present in the XML files in this list will replace any equivalent data in the preceding XML files."""
     setup_logging(verbose)
     OvalXMLFeedMerge(xml_files, output).merge_oval_xml_feeds()
     return 0

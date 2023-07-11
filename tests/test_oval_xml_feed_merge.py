@@ -12,6 +12,9 @@ from oval_xml_feed_merge.oval_xml_feed_merge import XMLUtils, OvalXMLFeedMerge
 
 class TestXMLUtils:
     def test_get_xml_root(self):
+        """Test that XMLUtils.get_xml_root reads the passed in XML file and returns an XML root element object
+        of the XML string read from the file
+        """
         xml_string = "<root><child>Content</child></root>"
         expected = ET.fromstring(xml_string)
         mock_xml_file = MagicMock()
@@ -24,6 +27,7 @@ class TestXMLUtils:
 @mock.patch.object(OvalXMLFeedMerge, "setup_output_xml_root", lambda x, y: y)
 class TestOvalXMLFeedMerge:
     def test_ctor(self):
+        """Test that OvalXMLFeedMerge constructor initializes all attributes to the expected values"""
         xml_files = ["first.xml", "second.xml"]
         oxfm = OvalXMLFeedMerge(xml_files, "some_file")
         assert oxfm.xml_files == xml_files
@@ -58,6 +62,9 @@ class TestOvalXMLFeedMerge:
         ],
     )
     def test_update_namespace_map(self, mock_xml_file_content, expected_results):
+        """Test that update_namespace_map updates the ns_prefix_map
+        with new namespaces and their prefixes from the passed in XML file
+        """
         mock_xml_file = MagicMock(name="test_xml.xml")
         mock_xml_file.__iter__.return_value = mock_xml_file_content
         oxfm = OvalXMLFeedMerge(["something"], None)
@@ -74,6 +81,8 @@ class TestOvalXMLFeedMerge:
         ],
     )
     def test_register_namespaces(self, mock_ns_prefix_map, expected_results):
+        """Test that register_namespaces registers the namespace prefixes and URIs present in the ns_prefix_map
+        with the xml.etree.ElementTree module"""
         with mock.patch("oval_xml_feed_merge.oval_xml_feed_merge.ET.register_namespace") as mock_reg_ns:
             oxfm = OvalXMLFeedMerge(["something"], None)
             oxfm.ns_prefix_map = mock_ns_prefix_map
@@ -82,6 +91,9 @@ class TestOvalXMLFeedMerge:
 
     @pytest.mark.parametrize("test_input, expected_results", [("mock_xml_file", "mock_xml_file")])
     def test_update_ns_map_and_register_ns(self, test_input, expected_results):
+        """Test that update_ns_map_and_register_ns calls update_namespace_map (with the expected params)
+        and register_namespaces
+        """
         with mock.patch.object(OvalXMLFeedMerge, "update_namespace_map") as mock_update_ns_map, mock.patch.object(
             OvalXMLFeedMerge, "register_namespaces"
         ) as mock_reg_ns:
@@ -110,6 +122,9 @@ class TestOvalXMLFeedMerge:
     def test_update_package_to_definition_map(
         self, xml_tree_root_content, mock_ns_prefix_map, expected_pkgname_to_definition_keys
     ):
+        """Test that update_package_to_definition_map updates the pkgname_to_definition dictionary with the expected
+        XML element objects from the passed XML tree (passed as the tree root)
+        """
         xml_tree_root = ET.fromstring(xml_tree_root_content)
         oxfm = OvalXMLFeedMerge(["test_xml.xml"], None)
         oxfm.ns_prefix_map = mock_ns_prefix_map
@@ -138,6 +153,8 @@ class TestOvalXMLFeedMerge:
     def test_append_element_to_output(
         self, element_path, mock_ns_prefix_map, orig_xml_content, xml_root_src_content, appended_xml_content
     ):
+        """Test that append_element_to_output appends XML elements present at a specific path in the input XML
+        to the output XML tree object"""
         oxfm = OvalXMLFeedMerge(["test_xml.xml"], None)
         oxfm.ns_prefix_map = mock_ns_prefix_map
         oxfm.output_xml_root = ET.fromstring(orig_xml_content)
@@ -155,6 +172,7 @@ class TestOvalXMLFeedMerge:
         mock_get_xml_root,
         mock_update_ns_map_and_register_ns,
     ):
+        """Test that process_xml_file calls the expected functions on the passed XML file"""
         mock_xml_tree_root = MagicMock()
         mock_get_xml_root.return_value = mock_xml_tree_root
         xml_file = MagicMock(name="xml_file.xml")
@@ -171,7 +189,8 @@ class TestOvalXMLFeedMerge:
     @pytest.mark.parametrize("xml_files", [([MagicMock(name="xml_file1.xml"), MagicMock(name="xml_file2.xml")])])
     @mock.patch.object(OvalXMLFeedMerge, "process_xml_file")
     def test_process_xml_files(self, mock_process_xml_file, xml_files):
-
+        """Test that process_xml_files iterates over the list of input XML files and calls process_xml_file on
+        each file"""
         oxfm = OvalXMLFeedMerge(xml_files, None)
         oxfm.process_xml_files()
         calls = []
@@ -205,6 +224,8 @@ class TestOvalXMLFeedMerge:
     def test_update_definitions_element(
         self, mock_pkgname_to_definition, mock_ns_prefix_map, orig_output_xml, expected_output_xml
     ):
+        """Test that the output XML contains all the definition elements maintained in pkgname_to_definition
+        after a call to update_definitions_element"""
         oxfm = OvalXMLFeedMerge(["test_xml.xml"], None)
         oxfm.pkgname_to_definition = mock_pkgname_to_definition
         oxfm.ns_prefix_map = mock_ns_prefix_map
@@ -214,6 +235,8 @@ class TestOvalXMLFeedMerge:
 
     @pytest.mark.parametrize("xml_content", ["<root><child>Content</child></root>"])
     def test_produce_output(self, xml_content):
+        """Test that produce_output calls write on the output file object
+        with the expected XML string"""
         to_xml = ET.fromstring(xml_content)
         from_xml = ET.tostring(to_xml, encoding="unicode")
         mock_file = MagicMock()
@@ -226,6 +249,7 @@ class TestOvalXMLFeedMerge:
     @mock.patch.object(OvalXMLFeedMerge, "update_definitions_element")
     @mock.patch.object(OvalXMLFeedMerge, "process_xml_files")
     def test_merge_oval_xml_feeds(self, mock_process_xml_files, mock_update_definitions_element, mock_produce_output):
+        """Test that merge_oval_xml_feeds calls the expected functions"""
         oxfm = OvalXMLFeedMerge(["test_xml.xml"], None)
         oxfm.merge_oval_xml_feeds()
         mock_process_xml_files.assert_called_once()
@@ -252,6 +276,8 @@ class TestNonPatchedOvalXMLFeedMerge:
     @mock.patch.object(OvalXMLFeedMerge, "update_ns_map_and_register_ns")
     @mock.patch.object(XMLUtils, "get_xml_root", _mock_xml_utils_get_xml_root)
     def test_setup_output_xml_root(self, mock_update_ns_map_and_register_ns, xml_files, mock_ns_prefix_map):
+        """Test that the constructor calls setup_output_xml_root. Also test that setup_output_xml_root
+        calls the expected set of functions with an expected set of params"""
         oxfm = OvalXMLFeedMerge(xml_files, None)
         mock_xml_root = oxfm.output_xml_root
         mock_xml_root.xml_file = xml_files[-1]

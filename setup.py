@@ -35,7 +35,7 @@ setup(
     description="A tool to merge the OVAL XML feeds for different Ubuntu images",
     entry_points={
         "console_scripts": [
-            "oval_xml_feed_merge=oval_xml_feed_merge.cli:main",
+            "oval-xml-feed-merge=oval_xml_feed_merge.cli:main",
         ],
     },
     install_requires=requirements,
