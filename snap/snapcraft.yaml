@@ -1,0 +1,33 @@
+name: oval-xml-feed-merge
+version: '0.1.1'
+base: core22
+summary: A tool to merge OVAL XML feeds
+description: |
+    This utility is designed to merge multiple OVAL XML feeds into a single XML.
+    oval-xml-feed-merge accepts a list of OVAL XML files in increasing priority.
+    Any OVAL data present in the XML files in this list will replace any equivalent data in the preceding XML files.
+    The tool can write the merged XML to stdout or to a file specified through the --output option.
+    The --verbose flag enables logging. Logs are written to stderr.
+
+grade: stable
+confinement: strict
+
+apps:
+  oval-xml-feed-merge:
+    command: bin/oval-xml-feed-merge
+    plugs:
+        - home
+
+
+parts:
+  oval-xml-feed-merge:
+    plugin: python
+    source: .
+    source-type: git
+    build-attributes:
+        - enable-patchelf
+    build-packages:
+        - git
+        - python3
+    stage-packages:
+        - python3.10-minimal
