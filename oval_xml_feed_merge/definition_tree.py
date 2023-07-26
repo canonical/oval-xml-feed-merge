@@ -1,23 +1,26 @@
 import re
+import xml.etree.ElementTree as ET
 from collections import defaultdict
+from typing import Dict, Set, Tuple, List
 
 
 class DefinitionTree:
     def __init__(self, definition_element, ns_prefix_map, id_to_element_map, type_to_referenced_ids_map):
-        self.definition_element = definition_element  # XML Element object
-        self.pkg_name = definition_element.find("./metadata/title", ns_prefix_map).text  # Package name
-        self.ns_prefix_map = ns_prefix_map  # A map of namespace prefix and URIs
-        self.id_to_element_map = id_to_element_map  # A map that tracks element identifier
+        self.definition_element: ET.Element = definition_element  # XML Element object
+        self.pkg_name: str = definition_element.find("./metadata/title", ns_prefix_map).text  # Package name
+        self.ns_prefix_map: Dict[str, str] = ns_prefix_map  # A map of namespace prefix and URIs
+        self.id_to_element_map: Dict[str, ET.Element] = id_to_element_map  # A map that tracks element identifier
         # to the respective element object
 
-        self.type_to_referenced_ids_map = type_to_referenced_ids_map  # A map of element type (test, variable, object,
-        # state, definition) to a set of element identifiers that were directly or indirectly referenced by a
-        # definition element that is chosen to be written to the output file. The current DefinitionTree
+        self.type_to_referenced_ids_map: Dict[str, Set[str]] = type_to_referenced_ids_map  # A map of element type (test
+        # , variable, object, state, definition) to a set of element identifiers that were directly or indirectly
+        # referenced by a definition element that is chosen to be written to the output file. The current DefinitionTree
         # object will update this map only when chosen to be written to the output file
 
-        self.local_type_to_referenced_ids_map = defaultdict(set)  # A map of element type (test, variable, object,
-        # state, definition) to a set of element identifiers that were directly or indirectly referenced by a
-        # definition element.
+        self.local_type_to_referenced_ids_map: Dict[str, Set[str]] = defaultdict(
+            set
+        )  # A map of element type (test, variable, object, state, definition) to a set of element identifiers that were
+        # directly or indirectly referenced by a definition element.
 
         self.ref_attr_regex = re.compile(r"([a-z]+)_ref")  # Regex to find references to other XML elements
 
@@ -32,7 +35,7 @@ class DefinitionTree:
             self.local_type_to_referenced_ids_map[ref_type].add(referenced_id)
             referenced_ids += self.find_refs_in_tree(referenced_element)
 
-    def find_refs_in_element(self, element, referenced_ids):
+    def find_refs_in_element(self, element: ET.Element, referenced_ids: List[Tuple[str, str]]):
         """Find references to the identifiers of other XML elements in the given element
         and return them
         """
@@ -45,7 +48,7 @@ class DefinitionTree:
         if match:
             referenced_ids += [(match.group(1), element.text)]
 
-    def find_refs_in_tree(self, root_element):
+    def find_refs_in_tree(self, root_element: ET.Element) -> List[Tuple[str, str]]:
         """Find references to the identifiers of other XML elements in the given element and its children
         and return them"""
         referenced_ids = []

@@ -1,8 +1,10 @@
 """Main module."""
 import logging
-from typing import List
+from typing import List, IO, Dict
 
+from oval_xml_feed_merge.definition_tree import DefinitionTree
 from oval_xml_feed_merge.xml_file import XMLFile
+import xml.etree.ElementTree as ET
 
 
 class OvalXMLFeedMerge:
@@ -12,23 +14,27 @@ class OvalXMLFeedMerge:
 
     xml_elements_to_merge = ["./definitions", "./tests", "./objects", "./states", "./variables"]
 
-    def __init__(self, raw_xml_files: List, output_file):
-        self.ns_prefix_map = {}  # Map namespace prefix to URI
-        self.pkgname_to_definition_tree = {}  # Map of the package name to "definition" XML element
-        self.xml_files = [XMLFile(xml_file, self.ns_prefix_map) for xml_file in raw_xml_files]  # Input files
-        self.output_xml_file = self.setup_output_xml_file(raw_xml_files[-1])  # Bootstrap an object to store
+    def __init__(self, raw_xml_files: List[IO], output_file: IO):
+        self.ns_prefix_map: Dict[str, str] = {}  # Map namespace prefix to URI
+        self.pkgname_to_definition_tree: Dict[
+            str, DefinitionTree
+        ] = {}  # Map of the package name to "definition" XML element
+        self.xml_files: List[XMLFile] = [
+            XMLFile(xml_file, self.ns_prefix_map) for xml_file in raw_xml_files
+        ]  # Input files
+        self.output_xml_file: XMLFile = self.setup_output_xml_file(raw_xml_files[-1])  # Bootstrap an object to store
         # the output XML
 
-        self.output_file = output_file
+        self.output_file: IO = output_file
 
-    def setup_output_xml_file(self, xml_file):
+    def setup_output_xml_file(self, raw_xml_file: IO) -> XMLFile:
         """Setup an XMLFile object that will be updated with merged contents and finally written to disk or stdout"""
-        xml_file = XMLFile(xml_file, self.ns_prefix_map)
+        xml_file = XMLFile(raw_xml_file, self.ns_prefix_map)
         xml_file.update_ns_map_and_register_ns()
         xml_file.clear_elements(OvalXMLFeedMerge.xml_elements_to_merge)
         return xml_file
 
-    def update_package_to_definition_map(self, xml_file):
+    def update_package_to_definition_map(self, xml_file: XMLFile):
         """Update the pkgname_to_definition map with the package name and a DefinitionTree object that encapsulates
         its 'definition' element
         If the package already exits in the map, it is discarded and overwritten, thus enforcing the XML file order
@@ -39,7 +45,7 @@ class OvalXMLFeedMerge:
             definition_tree.build_referenced_elements_tree()
             logging.debug("Updated definition XML for package: {}".format(definition_tree.pkg_name))
 
-    def process_xml_file(self, xml_file):
+    def process_xml_file(self, xml_file: XMLFile):
         """This function does a couple of things:
         1. Extract namespaces and prefixes from xml_file and register them with ET
         2. Update pkgname_to_definition from the package entries in xml_file
@@ -57,10 +63,10 @@ class OvalXMLFeedMerge:
             logging.debug("Processing done for {}".format(xml_file.name))
             logging.debug("-" * 50)
 
-    def update_definition_element_references_at_path(self, element_path):
+    def update_definition_element_references_at_path(self, element_path: str):
         """Get elements directly or indirectly referenced by a definition element chosen to be written to the
         output file and add them to the output file as well"""
-        referenced_elements = []
+        referenced_elements: List[ET.Element] = []
         for xml_file in self.xml_files:
             referenced_elements += xml_file.get_referenced_elements(element_path)
         self.output_xml_file.extend_element_at_path(element_path, referenced_elements)

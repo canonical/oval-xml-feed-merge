@@ -3,6 +3,7 @@ import os
 import re
 import sys
 from collections import defaultdict
+from typing import IO, Dict, Set, List, Generator
 from xml.dom import minidom
 
 from oval_xml_feed_merge.definition_tree import DefinitionTree
@@ -12,19 +13,23 @@ import xml.etree.ElementTree as ET
 
 
 class XMLFile:
-    def __init__(self, raw_xml_file, ns_prefix_map):
-        self.raw_xml_file = raw_xml_file  # Raw file object
-        self.name = raw_xml_file.name  # Name of the file on disk or stdout
-        self.xml_tree_root = XMLUtils.get_xml_root(raw_xml_file)  # Object of root element in the file
-        self.id_to_element_map = XMLUtils.generate_id_map(self.xml_tree_root)  # A map that tracks element identifier
+    def __init__(self, raw_xml_file, ns_prefix_map: Dict[str, str]):
+        self.raw_xml_file: IO = raw_xml_file  # Raw file object
+        self.name: str = raw_xml_file.name  # Name of the file on disk or stdout
+        self.xml_tree_root: ET.Element = XMLUtils.get_xml_root(raw_xml_file)  # Object of root element in the file
+        self.id_to_element_map: Dict[str, ET.Element] = XMLUtils.generate_id_map(
+            self.xml_tree_root
+        )  # A map that tracks element identifier
         # to the respective element object
 
-        self.ns_prefix_map = ns_prefix_map  # A map of namespace prefix and URIs
-        self.type_to_referenced_ids_map = defaultdict(set)  # A map of element type (test, variable, object, state,
+        self.ns_prefix_map: Dict[str, str] = ns_prefix_map  # A map of namespace prefix and URIs
+        self.type_to_referenced_ids_map: Dict[str, Set[str]] = defaultdict(
+            set
+        )  # A map of element type (test, variable, object, state,
         # definition) to a set of element identifiers that were directly or indirectly referenced by a definition
         # element in the file that is chosen to be written to the output file
 
-    def get_definition_trees(self):
+    def get_definition_trees(self) -> Generator[DefinitionTree, None, None]:
         """Find all definition elements in the current file, create a DefinitionTree object for them and return it"""
         for definition in self.xml_tree_root.find("./definitions", self.ns_prefix_map):
             if definition.attrib["class"] == "inventory":  # Definition elements with class "inventory" are preserved
@@ -34,7 +39,7 @@ class XMLFile:
                 definition, self.ns_prefix_map, self.id_to_element_map, self.type_to_referenced_ids_map
             )
 
-    def get_referenced_elements(self, path):
+    def get_referenced_elements(self, path) -> List[ET.Element]:
         """Return all elements relevant to the parameter "path" referenced directly or indirectly by a definition
         element chosen to be written to the output file
         """
@@ -78,24 +83,24 @@ class XMLFile:
         self.update_namespace_map()
         self.register_namespaces()
 
-    def clear_elements(self, xml_elements_to_clear):
+    def clear_elements(self, xml_elements_to_clear: List[str]):
         """Clear all elements listed in "xml_elements_to_clear" from the current XML file"""
         for element in xml_elements_to_clear:
             logging.debug("Element: {}".format(element))
             self.xml_tree_root.find(element, self.ns_prefix_map).clear()
 
-    def append_element_to_path(self, path, element):
+    def append_element_to_path(self, path: str, element: ET.Element):
         """Append a single element to the given path"""
         element_at_path = self.xml_tree_root.find(path, self.ns_prefix_map)
         element_at_path.append(element)
 
-    def extend_element_at_path(self, path, elements):
+    def extend_element_at_path(self, path: str, elements: List[ET.Element]):
         """Append a sequence of elements to the given path"""
         self.xml_tree_root.find(path, self.ns_prefix_map).extend(elements)
 
     def validate_xml_ids(self):
         """Validate that each element with an "id" attribute has a unique value for that attribute"""
-        element_id_set = set()
+        element_id_set: Set[str] = set()
         for element in self.xml_tree_root.findall(".//*[@id]"):
             element_id = element.attrib["id"]
             if element_id in element_id_set:
@@ -103,7 +108,7 @@ class XMLFile:
                 sys.exit(1)
             element_id_set.add(element_id)
 
-    def dump_to_file(self, output_file):
+    def dump_to_file(self, output_file: IO):
         """Write XML to specified file"""
         output_string = ET.tostring(self.xml_tree_root, encoding="unicode")
         output_string = minidom.parseString(output_string).toprettyxml(indent="  ")

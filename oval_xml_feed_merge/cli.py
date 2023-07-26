@@ -1,12 +1,14 @@
 """Console script for oval_xml_feed_merge."""
 import logging
 import sys
+from typing import IO, List
+
 import click
 
 from oval_xml_feed_merge.oval_xml_feed_merge import OvalXMLFeedMerge
 
 
-def setup_logging(verbose):
+def setup_logging(verbose: bool):
     logging_level = logging.DEBUG if verbose else logging.INFO
     logger = logging.getLogger()
     logger.setLevel(logging_level)
@@ -25,7 +27,7 @@ def setup_logging(verbose):
     help="If provided, the output XML will be written to this file else to stdout",
 )
 @click.option("--verbose", is_flag=True, help="Enable verbose logging")
-def main(xml_files, output, verbose):
+def main(xml_files: List[IO], output: IO, verbose: bool):
     """XML_FILES: List of files to process in the order of increasing priority.
     Any OVAL data present in the XML files in this list will replace any equivalent data in the preceding XML files."""
     setup_logging(verbose)
