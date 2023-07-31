@@ -9,6 +9,8 @@ The `--verbose` flag enables logging. Logs are written to `stderr`.
 
 A sample invocation: `oval-xml-feed-merge --verbose com.ubuntu.jammy.pkg.oval.xml com.ubuntu.gke-1.27_jammy.pkg.oval.xml --output output.xml`
 
+This repository is a temporary home for the OVAL XML Feed Merge tool. The Public Cloud Security team plans to consolidate all OVAL related tooling in a single project and create a common snap for all tools within that project. This tool will eventually be moved there.
+
 Current Usage
 -------
 1. Setup a virtual environment and activate it.
