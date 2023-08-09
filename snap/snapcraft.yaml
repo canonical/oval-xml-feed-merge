@@ -30,4 +30,7 @@ parts:
         - git
         - python3
     stage-packages:
+        - libpython3.10-minimal
+        - libpython3.10-stdlib
         - python3.10-minimal
+        - python3.10-venv
