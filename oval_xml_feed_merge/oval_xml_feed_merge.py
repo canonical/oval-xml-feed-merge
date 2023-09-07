@@ -2,6 +2,9 @@
 import logging
 from typing import List, IO, Dict
 
+from oval_xml_feed_merge.utils import Utils
+from oval_xml_feed_merge.xml_utils import XMLUtils
+
 from oval_xml_feed_merge.definition_tree import DefinitionTree
 from oval_xml_feed_merge.xml_file import XMLFile
 import xml.etree.ElementTree as ET
@@ -19,8 +22,10 @@ class OvalXMLFeedMerge:
         self.pkgname_to_definition_tree: Dict[
             str, DefinitionTree
         ] = {}  # Map of the package name to "definition" XML element
+        suffix_generator = Utils.next_int(0)
         self.xml_files: List[XMLFile] = [
-            XMLFile(xml_file, self.ns_prefix_map) for xml_file in raw_xml_files
+            XMLFile(XMLUtils.as_string_io_with_regenerated_ids(xml_file, suffix_generator), self.ns_prefix_map)
+            for xml_file in raw_xml_files
         ]  # Input files
         self.output_xml_file: XMLFile = self.setup_output_xml_file(raw_xml_files[-1])  # Bootstrap an object to store
         # the output XML
