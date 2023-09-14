@@ -1,5 +1,5 @@
 name: oval-xml-feed-merge
-version: '0.1.3'
+version: '0.1.4'
 base: core22
 summary: A tool to merge OVAL XML feeds
 description: |
