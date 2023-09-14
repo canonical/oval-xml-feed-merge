@@ -14,23 +14,42 @@ confinement: strict
 
 apps:
   oval-xml-feed-merge:
-    command: bin/oval-xml-feed-merge
+    command: bin/run-oval-xml-feed-merge.sh
     plugs:
-        - home
+      - home
 
 
 parts:
+  run-oval-xml-feed-merge:
+    plugin: dump
+    source: .
+    organize:
+      run-oval-xml-feed-merge.sh: bin/run-oval-xml-feed-merge.sh
+    stage:
+      - bin/run-oval-xml-feed-merge.sh
+
   oval-xml-feed-merge:
     plugin: python
     source: .
     source-type: git
-    build-attributes:
-        - enable-patchelf
     build-packages:
-        - git
-        - python3
+      - git
+      - python3
     stage-packages:
-        - libpython3.10-minimal
-        - libpython3.10-stdlib
-        - python3.10-minimal
-        - python3.10-venv
+      - libpython3.10-minimal
+      - libpython3.10-stdlib
+      - python3.10-minimal
+      - python3.10-venv
+    build-attributes:
+      - enable-patchelf
+
+  snapcraft-preload:
+    source: https://github.com/sergiusens/snapcraft-preload.git
+    plugin: cmake
+    cmake-parameters:
+      - -DCMAKE_INSTALL_PREFIX=/
+    build-packages:
+      - make
+      - on amd64:
+        - gcc-multilib
+        - g++-multilib
