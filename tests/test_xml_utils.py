@@ -62,7 +62,7 @@ class TestXMLUtils:
         }
 
     @pytest.mark.parametrize(
-        "input_file_content, input_file_name, expected_content_after_test",
+        "input_file_content, input_file_name, input_global_input_id_set, expected_content_after_test",
         [
             (
                 "<root>"
@@ -70,14 +70,17 @@ class TestXMLUtils:
                 '<var id="oval:focal.var:4567" >A var element</var>'
                 "</root>",
                 "random.xml",
+                {"oval:focal.tst:1234"},
                 "<root>"
                 '<test id="oval:focal.tst:12340000000000000001" >A test element</test>'
-                '<var id="oval:focal.var:45670000000000000001" >A var element</var>'
+                '<var id="oval:focal.var:4567" >A var element</var>'
                 "</root>",
             ),
         ],
     )
-    def test_as_string_io_with_regenerated_ids(self, input_file_content, input_file_name, expected_content_after_test):
+    def test_as_string_io_with_regenerated_ids(
+        self, input_file_content, input_file_name, input_global_input_id_set, expected_content_after_test
+    ):
         """Test that as_string_io_with_regenerated_ids regenerates IDs and returns a StringIO object"""
         input_file = StringIO(input_file_content)
         input_file.name = input_file_name
@@ -86,13 +89,13 @@ class TestXMLUtils:
             while True:
                 yield 1
 
-        result: StringIO = XMLUtils.as_string_io_with_regenerated_ids(input_file, int_gen())
+        result: StringIO = XMLUtils.as_string_io_with_regenerated_ids(input_file, int_gen(), input_global_input_id_set)
         assert result.getvalue() == expected_content_after_test
         assert result.name == input_file_name
         assert type(result) == StringIO
 
     @pytest.mark.parametrize(
-        "input_file_content, input_file_name, expected_content_after_test",
+        "input_file_content, input_file_name, input_global_input_id_set, expected_content_after_test",
         [
             (
                 "<root>"
@@ -100,6 +103,7 @@ class TestXMLUtils:
                 '<var id="oval:focal.var:4567" >A var element</var>'
                 "</root>",
                 "random.xml",
+                {"oval:focal.tst:1234", "oval:focal.var:4567"},
                 "<root>"
                 '<test id="oval:focal.tst:12340000000000000001" >A test element</test>'
                 '<var id="oval:focal.var:45670000000000000001" >A var element</var>'
@@ -107,7 +111,9 @@ class TestXMLUtils:
             ),
         ],
     )
-    def test_regenerate_ids(self, input_file_content, input_file_name, expected_content_after_test):
+    def test_regenerate_ids(
+        self, input_file_content, input_file_name, input_global_input_id_set, expected_content_after_test
+    ):
         """Test that regenerate_ids regenerates IDs and returns a str object"""
         input_file = StringIO(input_file_content)
         input_file.name = input_file_name
@@ -116,12 +122,12 @@ class TestXMLUtils:
             while True:
                 yield 1
 
-        result: str = XMLUtils.regenerate_and_replace_ids(input_file, int_gen())
+        result: str = XMLUtils.regenerate_and_replace_ids(input_file, int_gen(), input_global_input_id_set)
         assert result == expected_content_after_test
         assert type(result) == str
 
     @pytest.mark.parametrize(
-        "input_file_line, input_current_to_new_id_map, expected_return_value",
+        "input_file_line, input_current_file_old_to_new_id_map, expected_return_value",
         [
             (
                 '<test id="oval:focal.tst:1234" >A test element</test>'
@@ -132,10 +138,10 @@ class TestXMLUtils:
             ),
         ],
     )
-    def test_replace_element_ids(self, input_file_line, input_current_to_new_id_map, expected_return_value):
+    def test_replace_element_ids(self, input_file_line, input_current_file_old_to_new_id_map, expected_return_value):
         """Test that replace_element_ids replaces IDs as expected from input XML"""
 
-        result: str = XMLUtils.replace_element_ids(input_current_to_new_id_map, input_file_line)
+        result: str = XMLUtils.replace_element_ids(input_current_file_old_to_new_id_map, input_file_line)
         assert result == expected_return_value
         assert type(result) == str
 
@@ -149,21 +155,24 @@ class TestXMLUtils:
                 "</root>",
                 "random.xml",
                 {
-                    "oval:focal.tst:1234": "oval:focal.tst:12340000000000000001",
-                    "oval:focal.var:4567": "oval:focal.var:45670000000000000001",
+                    "oval:focal.tst:1234": None,
+                    "oval:focal.var:4567": None,
                 },
             )
         ],
     )
     def test_update_current_to_new_element_id_map(self, input_file_content, file_name, expected_id_map):
-        current_to_new_id_map = {}
+        global_id_set = set()
+        current_file_old_to_new_id_map = {}
 
         def int_gen():
             while True:
                 yield 1
 
-        XMLUtils.update_current_to_new_element_id_map(current_to_new_id_map, int_gen(), input_file_content, file_name)
-        assert current_to_new_id_map == expected_id_map
+        XMLUtils.update_current_to_new_element_id_map(
+            current_file_old_to_new_id_map, int_gen(), global_id_set, input_file_content, file_name
+        )
+        assert current_file_old_to_new_id_map == expected_id_map
 
     @pytest.mark.parametrize(
         "input_file_content, file_name, duplicate_id, expected_id_map",
@@ -176,7 +185,7 @@ class TestXMLUtils:
                 "random.xml",
                 "oval:focal.tst:1234",
                 {
-                    "oval:focal.tst:1234": "oval:focal.tst:12340000000000000001",
+                    "oval:focal.tst:1234": None,
                 },
             )
         ],
@@ -185,12 +194,15 @@ class TestXMLUtils:
     def test_update_current_to_new_element_id_map_log(
         self, mock_log_warn, input_file_content, file_name, duplicate_id, expected_id_map
     ):
-        current_to_new_id_map = {}
+        current_file_old_to_new_id_map = {}
+        global_id_set = set()
 
         def int_gen():
             while True:
                 yield 1
 
-        XMLUtils.update_current_to_new_element_id_map(current_to_new_id_map, int_gen(), input_file_content, file_name)
-        assert current_to_new_id_map == expected_id_map
+        XMLUtils.update_current_to_new_element_id_map(
+            current_file_old_to_new_id_map, int_gen(), global_id_set, input_file_content, file_name
+        )
+        assert current_file_old_to_new_id_map == expected_id_map
         mock_log_warn.assert_called_with(f"Duplicate element ID: {duplicate_id} in {file_name}")

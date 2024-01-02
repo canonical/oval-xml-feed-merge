@@ -23,8 +23,12 @@ class OvalXMLFeedMerge:
             str, DefinitionTree
         ] = {}  # Map of the package name to "definition" XML element
         suffix_generator = Utils.next_int(0)
+        global_input_id_set = set()  # A global set to track all seen OVAL IDs
         self.xml_files: List[XMLFile] = [
-            XMLFile(XMLUtils.as_string_io_with_regenerated_ids(xml_file, suffix_generator), self.ns_prefix_map)
+            XMLFile(
+                XMLUtils.as_string_io_with_regenerated_ids(xml_file, suffix_generator, global_input_id_set),
+                self.ns_prefix_map,
+            )
             for xml_file in raw_xml_files
         ]  # Input files
         self.output_xml_file: XMLFile = self.setup_output_xml_file(raw_xml_files[-1])  # Bootstrap an object to store

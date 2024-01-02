@@ -18,7 +18,7 @@ class TestOvalXMLFeedMergeTestCtor:
     @mock.patch("oval_xml_feed_merge.oval_xml_feed_merge.XMLUtils.as_string_io_with_regenerated_ids")
     def test_ctor(self, mock_as_string_io, mock_xml_file, xml_file_names):
         """Test that OvalXMLFeedMerge constructor initializes all attributes to the expected values"""
-        mock_as_string_io.side_effect = lambda x, y: x
+        mock_as_string_io.side_effect = lambda x, y, z: x
         mock_output_file = MagicMock()
         oxfm = OvalXMLFeedMerge(xml_file_names, mock_output_file)
         calls = []
@@ -208,7 +208,7 @@ class TestOvalXMLFeedMergeSetupOutputXMLFile:
         """Test that the constructor calls setup_output_xml_file. Also test that setup_output_xml_file
         sets up a cleared output_xml_file
         """
-        mock_as_string_io.side_effect = lambda x, y: x
+        mock_as_string_io.side_effect = lambda x, y, z: x
         mock_xml_files = []
         for xml_file_name, content in zip(xml_files, xml_files_contents):
             mock_xml_file = MagicMock(name=xml_file_name)
@@ -221,7 +221,7 @@ class TestOvalXMLFeedMergeSetupOutputXMLFile:
     @mock.patch("oval_xml_feed_merge.oval_xml_feed_merge.XMLUtils.as_string_io_with_regenerated_ids")
     def test_setup_output_xml_file_calls(self, mock_as_string_io, mock_xml_file):
         """Test that setup_output_xml_file makes the expected calls"""
-        mock_as_string_io.side_effect = lambda x, y: x
+        mock_as_string_io.side_effect = lambda x, y, z: x
         xml_file_object = MagicMock()
         mock_xml_file.return_value = xml_file_object
         xml_files = ["test_xml.xml"]
