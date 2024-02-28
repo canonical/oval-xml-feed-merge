@@ -4,7 +4,7 @@
 CONFINEMENT=$(grep confinement $SNAP/meta/snap.yaml|sed 's/^.*: //')
 
 if [ $CONFINEMENT == "strict" ]; then
-  snapcraft-preload $SNAP/bin/oval-xml-feed-merge "$@"
+  $SNAP/bin/snapcraft-preload $SNAP/bin/oval-xml-feed-merge "$@"
 else
-  oval-xml-feed-merge "$@"
+  $SNAP/bin/python3 $SNAP/bin/oval-xml-feed-merge "$@"
 fi
