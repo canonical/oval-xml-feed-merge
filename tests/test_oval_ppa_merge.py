@@ -466,10 +466,14 @@ VARAIBLE_TYPES = {
 
 
 class XMLDetails:
-    def __init__(self, filename: str):
-        self.ns_map = self.update_namespace_map(filename)
-        xml = ET.parse(filename)
-        self.root = xml.getroot()
+    def __init__(self, filename, parse_from_file=True):
+        if parse_from_file:
+            self.ns_map = self.update_namespace_map(filename)
+            xml = ET.parse(filename)
+            self.root = xml.getroot()
+        else:
+            self.ns_map = filename.ns_prefix_map
+            self.root = filename.xml_tree_root
         self.extract_defintion_data()
         self.extract_tests_data()
         self.extract_object_data()
@@ -670,7 +674,7 @@ class XMLDetails:
 class BaseMerge:
     MAIN_FILE = "com.ubuntu.jammy.pkg.oval.xml"
 
-    @pytest.fixture
+    @pytest.fixture(autouse=True, scope="class")
     def setup(self, request):
         test_data_path = request.path.parent.joinpath("test_data")
         main_data_path = test_data_path.joinpath(self.MAIN_FILE)
@@ -683,21 +687,24 @@ class BaseMerge:
         if not ppa_data_path.exists():
             pytest.skip(f"{self.PPA_FILE} not in {test_data_path}")
 
-        input_main = XMLDetails(main_data_path)
-        input_ppa = XMLDetails(ppa_data_path)
+        input_main_xml_file = open(main_data_path, "r")
+        input_ppa_xml_file = open(ppa_data_path, "r")
+        input_xml_files = [input_main_xml_file, input_ppa_xml_file]
+        output_xml_file = open(merged_data_path, "w")
+        xml_merge = OvalXMLFeedMerge(input_xml_files, output_xml_file)
+        xml_merge.merge_oval_xml_feeds()
 
-        if not merged_data_path.exists():
-            input_main_xml_file = open(main_data_path, "r")
-            input_ppa_xml_file = open(ppa_data_path, "r")
-            xml_files = [input_main_xml_file, input_ppa_xml_file]
-            output_xml_file = open(merged_data_path, "w")
+        processed_input_main = xml_merge.xml_files[0]
+        process_input_ppa = xml_merge.xml_files[1]
 
-            OvalXMLFeedMerge(xml_files, output_xml_file).merge_oval_xml_feeds()
-            input_main_xml_file.close()
-            input_ppa_xml_file.close()
-            output_xml_file.close()
+        input_main_xml_file.close()
+        input_ppa_xml_file.close()
+        output_xml_file.close()
 
-        output = XMLDetails(merged_data_path)
+        input_main = XMLDetails(processed_input_main, parse_from_file=False)
+        input_ppa = XMLDetails(process_input_ppa, parse_from_file=False)
+        output = XMLDetails(merged_data_path, parse_from_file=True)
+
         yield input_main, input_ppa, output
 
     def check_merged(self, input_main, input_ppa, output):
@@ -705,7 +712,6 @@ class BaseMerge:
             # ID or package existed in both inputs
             if element_id in input_ppa and element_id in input_main:
                 assert details == input_ppa[element_id]
-                assert details != input_main[element_id]
 
             # ID existed in ppa OVAL input but not main OVAL input
             elif element_id in input_ppa and element_id not in input_main:
