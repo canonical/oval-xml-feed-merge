@@ -2,10 +2,13 @@
 TEST DATA
 ===================
 
-In order for the blackbox tests in ``test_oval_ppa_merge.py`` to work, the following files need to be downloaded and decompressed in the ``test_data`` directory:
+In order for the blackbox tests in ``test_oval_ppa_merge.py`` to work, the following files need to be in the ``test_data`` directory:
 
+* ``com.ubuntu.focal.pkg.oval.xml``
+* ``com.ubuntu.fips-updates_focal.pkg.oval.xml``
 * ``com.ubuntu.jammy.pkg.oval.xml``
 * ``com.ubuntu.gke-1.27_jammy.pkg.oval.xml``
+* ``com.ubuntu.gke-1.27_jammy.pkg.oval-duplicate-id.xml``
 * ``com.ubuntu.gke-1.28_jammy.pkg.oval.xml``
 * ``com.ubuntu.gke-1.28_jammy.pkg.oval.xml``
 * ``com.ubuntu.gke-1.30_jammy.pkg.oval.xml``
@@ -39,23 +42,27 @@ The processing logic is found in the ``XMLDetails`` class, specifically under th
 
 Definitions
 ^^^^^^^^^^^
-For each definition, the element ID is represented by the package title (e.g ``<title>containerd</title>``) under the ``<metadata>`` tag. The element this ID is mapped to is the set of CVEs under the ``<cve>`` tags and the criteria (<criteria>) for this package. This is implemented with elements being represented as classes with the following structure:
+For each definition, the element ID is represented by the definition ID (e.g ``<definition class="vulnerability" *id=...*``). The element this ID is mapped the remaining details embedded under this specific definition tag, including criteria and cve details. This is implemented with definition elements being represented using the following classes:
 
-* CVE:
-    * cve number, 
-    * href,
-    * test_ref
+* Definition
+    * id
+    * title
+    * Criteria class:
+        * extended_def,
+        * criterions (set of):
+            * Criterion class
+                * test_ref
+                * comment
+            * ExtendedDefintion class
+                * test_ref
+                * comment
+                * applicability_check
+    * cves (set of):
+        * CVE class:
+            * cve number,
+            * href,
+            * test_ref
 
-* Criteria:
-    * extended_def, 
-    * criterions (set of):
-        * Criterion class 
-            * test_ref
-            * comment
-        * ExtendedDefintion class
-            * test_ref
-            * comment
-            * applicability_check
 Tests
 ^^^^^
 For each test, the element ID is represented by the test ID (e.g ``<ind-def:family_test *id=...*>``). The element this ID is mapped the remaining details embedded under this specific tests tag, including object and state refs. This is implemented with test elements being represented as one of the following classes depending on the test type:

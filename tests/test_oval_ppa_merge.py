@@ -8,6 +8,29 @@ import re
 from oval_xml_feed_merge.oval_xml_feed_merge import OvalXMLFeedMerge
 
 
+class Defintion:
+    def __init__(self, title, defintion_id, criteria, cves):
+        self.title = title
+        self.defintion_id = defintion_id
+        self.criteria = criteria
+        self.cves = cves
+
+    def __eq__(self, other):
+        return (
+            self.title == other.title
+            and self.defintion_id == other.defintion_id
+            and self.criteria == other.criteria
+            and self.cves == other.cves
+        )
+
+    def __hash__(self):
+        return hash(self.title, self.defintion_id, self.criteria, self.cves)
+
+    def __str__(self):
+        formatted_cves = "".join("\n\t" + str(cve) for cve in self.cves)
+        return f"Definition:\n\t{self.title}\n\t{self.defintion_id}\n\t{self.criteria}" + f"\n\t{formatted_cves}"
+
+
 class Criterion:
     def __init__(self, ref, comment):
         self.ref = ref
@@ -597,6 +620,7 @@ class XMLDetails:
         package_vulnerabilities = {}
 
         for definition in self.get_definitions():
+            definition_id = definition.get("id")
             pkg = definition.find("./metadata/title", self.ns_map).text
 
             # Extract details from CVE tags
@@ -631,7 +655,7 @@ class XMLDetails:
 
             criteria = Criteria(extended_def, criterion)
 
-            package_vulnerabilities[pkg] = {"cves": cves, "criteria": criteria}
+            package_vulnerabilities[definition_id] = Defintion(pkg, definition_id, criteria, cves)
         self.package_vulnerabilities = package_vulnerabilities
 
     def update_namespace_map(self, raw_xml_file):
@@ -681,12 +705,6 @@ class BaseMerge:
         ppa_data_path = test_data_path.joinpath(self.PPA_FILE)
         merged_data_path = test_data_path.joinpath(self.MERGED_FILE)
 
-        if not main_data_path.exists():
-            pytest.skip(f"{self.MAIN_FILE} not in {test_data_path}")
-
-        if not ppa_data_path.exists():
-            pytest.skip(f"{self.PPA_FILE} not in {test_data_path}")
-
         input_main_xml_file = open(main_data_path, "r")
         input_ppa_xml_file = open(ppa_data_path, "r")
         input_xml_files = [input_main_xml_file, input_ppa_xml_file]
@@ -723,7 +741,7 @@ class BaseMerge:
 
             # ID didn't exist in either input file
             else:
-                pytest.fail("Shouldn't have a case where both ID's are kept")
+                pytest.fail("Shouldn't have a case where ID's didn't exist in input file")
 
     def test_pkg_defintion_merge(self, setup):
         main, ppa, merged = setup
@@ -789,3 +807,15 @@ class TestGKE130Merge(BaseMerge):
 class TestGKE131Merge(BaseMerge):
     PPA_FILE = "com.ubuntu.gke-1.31_jammy.pkg.oval.xml"
     MERGED_FILE = "com.ubuntu.merged_gke-1.31_jammy.pkg.oval.xml"
+
+
+class TestGKEDuplicateIDs(BaseMerge):
+    MAIN_FILE = "com.ubuntu.gke-1.27_jammy.pkg.oval.xml"
+    PPA_FILE = "com.ubuntu.gke-1.27_jammy.pkg.oval-duplicate-id.xml"
+    MERGED_FILE = "com.ubuntu.merged_gke-1.27_jammy.pkg.oval-duplicate-id.xml"
+
+
+class TestFips(BaseMerge):
+    MAIN_FILE = "com.ubuntu.focal.pkg.oval.xml"
+    PPA_FILE = "com.ubuntu.fips-updates_focal.pkg.oval.xml"
+    MERGED_FILE = "com.ubuntu.merged_fips_focal.pkg.oval.xml"
