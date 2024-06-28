@@ -1,0 +1,58 @@
+<?xml version="1.0" ?>
+<oval_definitions xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:linux-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd   http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd   http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd   http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd   http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd">
+  <generator>
+    <oval:product_name>Canonical Package OVAL Generator</oval:product_name>
+    <oval:product_version>2</oval:product_version>
+    <oval:schema_version>5.11.1</oval:schema_version>
+    <oval:timestamp>2024-06-11T12:44:08</oval:timestamp>
+  </generator>
+  <definitions>
+    <definition class="inventory" id="oval:com.ubuntu.gke-1.31_jammy:def:100" version="1">
+      <metadata>
+        <title>Check that Ubuntu 22.04 LTS (gke-1.31_jammy) is installed.</title>
+        <description/>
+      </metadata>
+      <criteria>
+        <criterion test_ref="oval:com.ubuntu.gke-1.31_jammy:tst:100" comment="The host is part of the unix family."/>
+        <criterion test_ref="oval:com.ubuntu.gke-1.31_jammy:tst:101" comment="The host is running Ubuntu gke-1.31_jammy"/>
+      </criteria>
+    </definition>
+  </definitions>
+  <tests>
+    <ind-def:family_test id="oval:com.ubuntu.gke-1.31_jammy:tst:100" check="at least one" check_existence="at_least_one_exists" version="1" comment="Is the host part of the unix family?">
+      <ind-def:object object_ref="oval:com.ubuntu.gke-1.31_jammy:obj:100"/>
+      <ind-def:state state_ref="oval:com.ubuntu.gke-1.31_jammy:ste:100"/>
+    </ind-def:family_test>
+    <ind-def:textfilecontent54_test id="oval:com.ubuntu.gke-1.31_jammy:tst:101" check="at least one" check_existence="at_least_one_exists" version="1" comment="Is the host running Ubuntu gke-1.31_jammy?">
+      <ind-def:object object_ref="oval:com.ubuntu.gke-1.31_jammy:obj:101"/>
+      <ind-def:state state_ref="oval:com.ubuntu.gke-1.31_jammy:ste:101"/>
+    </ind-def:textfilecontent54_test>
+  </tests>
+  <objects>
+    <ind-def:family_object id="oval:com.ubuntu.gke-1.31_jammy:obj:100" version="1" comment="The singleton family object."/>
+    <ind-def:textfilecontent54_object id="oval:com.ubuntu.gke-1.31_jammy:obj:101" version="1" comment="The singleton gke-1.31_jammy object.">
+      <ind-def:filepath>/etc/lsb-release</ind-def:filepath>
+      <ind-def:pattern operation="pattern match">^[\s\S]*DISTRIB_CODENAME=([a-z]+)$</ind-def:pattern>
+      <ind-def:instance datatype="int">1</ind-def:instance>
+    </ind-def:textfilecontent54_object>
+    <unix-def:uname_object id="oval:com.ubuntu.gke-1.31_jammy:obj:11110000000000" version="1" comment="The uname object."/>
+  </objects>
+  <states>
+    <ind-def:family_state id="oval:com.ubuntu.gke-1.31_jammy:ste:100" version="1" comment="The singleton family state.">
+      <ind-def:family>unix</ind-def:family>
+    </ind-def:family_state>
+    <ind-def:textfilecontent54_state id="oval:com.ubuntu.gke-1.31_jammy:ste:101" version="1" comment="The singleton gke-1.31_jammy state.">
+      <ind-def:subexpression>jammy</ind-def:subexpression>
+    </ind-def:textfilecontent54_state>
+  </states>
+  <variables>
+    <local_variable id="oval:com.ubuntu.gke-1.31_jammy:var:11110000000000" version="1" datatype="debian_evr_string" comment="Kernel version in evr format">
+      <concat>
+        <literal_component>0:</literal_component>
+        <regex_capture pattern="^([\d|\.]+-\d+)[-|\w]+$">
+          <object_component object_ref="oval:com.ubuntu.gke-1.31_jammy:obj:11110000000000" item_field="os_release"/>
+        </regex_capture>
+      </concat>
+    </local_variable>
+  </variables>
+</oval_definitions>

@@ -1,0 +1,257 @@
+<?xml version="1.0" ?>
+<oval_definitions xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:linux-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd   http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd   http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd   http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd   http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd">
+  <generator>
+    <oval:product_name>Canonical Package OVAL Generator</oval:product_name>
+    <oval:product_version>2</oval:product_version>
+    <oval:schema_version>5.11.1</oval:schema_version>
+    <oval:timestamp>2024-06-03T10:40:45</oval:timestamp>
+  </generator>
+  <definitions>
+    <definition class="inventory" id="oval:com.ubuntu.gke-1.29_jammy:def:100" version="1">
+      <metadata>
+        <title>Check that Ubuntu 22.04 LTS (gke-1.29_jammy) is installed.</title>
+        <description/>
+      </metadata>
+      <criteria>
+        <criterion test_ref="oval:com.ubuntu.gke-1.29_jammy:tst:100" comment="The host is part of the unix family."/>
+        <criterion test_ref="oval:com.ubuntu.gke-1.29_jammy:tst:101" comment="The host is running Ubuntu gke-1.29_jammy"/>
+      </criteria>
+    </definition>
+    <definition class="vulnerability" id="oval:com.ubuntu.gke-1.29_jammy:def:11110000100000" version="1">
+      <metadata>
+        <title>containerd</title>
+        <reference source="Package" ref_id="containerd" ref_url="https://launchpad.net/ubuntu/+source/containerd"/>
+        <description/>
+        <affected family="unix">
+          <platform>Ubuntu 22.04 LTS</platform>
+        </affected>
+        <advisory>
+          <rights>Copyright (C) 2024 Canonical Ltd.</rights>
+          <component>main</component>
+          <current_version>1.7.13-0ubuntu0~22.04.1~gke1</current_version>
+          <cve href="https://ubuntu.com/security/CVE-2021-21334" priority="medium" public="20210305" cvss_score="6.3" cvss_vector="CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:C/C:H/I:N/A:N" cvss_severity="medium" usns="4881-1" test_ref="oval:com.ubuntu.gke-1.29_jammy:tst:11110000100000">CVE-2021-21334</cve>
+          <cve href="https://ubuntu.com/security/CVE-2022-23471" priority="medium" public="20221208" cvss_score="6.5" cvss_vector="CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H" cvss_severity="medium" usns="5776-1" test_ref="oval:com.ubuntu.gke-1.29_jammy:tst:11110000100010">CVE-2022-23471</cve>
+          <cve href="https://ubuntu.com/security/CVE-2022-24769" priority="medium" public="20220324" cvss_score="5.9" cvss_vector="CVSS:3.1/AV:L/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L" cvss_severity="medium" usns="5776-1" test_ref="oval:com.ubuntu.gke-1.29_jammy:tst:11110000100020">CVE-2022-24769</cve>
+        </advisory>
+      </metadata>
+      <criteria>
+        <extend_definition definition_ref="oval:com.ubuntu.gke-1.29_jammy:def:100" comment="Ubuntu 22.04 LTS is installed." applicability_check="true"/>
+        <criteria operator="OR">
+          <criterion test_ref="oval:com.ubuntu.gke-1.29_jammy:tst:11110000100000" comment="(CVE-2021-21334) containerd package in gke-1.29_jammy, is related to the CVE in some way and has been fixed (note: '1.4.4-0ubuntu1')."/>
+          <criterion test_ref="oval:com.ubuntu.gke-1.29_jammy:tst:11110000100010" comment="(CVE-2022-23471) containerd package in gke-1.29_jammy, is related to the CVE in some way and has been fixed (note: '1.6.12-0ubuntu0~22.04.1~gke1')."/>
+          <criterion test_ref="oval:com.ubuntu.gke-1.29_jammy:tst:11110000100020" comment="(CVE-2022-24769) containerd package in gke-1.29_jammy, is related to the CVE in some way and has been fixed (note: '1.6.1-0ubuntu0.4')."/>
+        </criteria>
+      </criteria>
+    </definition>
+    <definition class="vulnerability" id="oval:com.ubuntu.gke-1.29_jammy:def:11110000200000" version="1">
+      <metadata>
+        <title>docker.io</title>
+        <reference source="Package" ref_id="docker.io" ref_url="https://launchpad.net/ubuntu/+source/docker.io"/>
+        <description/>
+        <affected family="unix">
+          <platform>Ubuntu 22.04 LTS</platform>
+        </affected>
+        <advisory>
+          <rights>Copyright (C) 2024 Canonical Ltd.</rights>
+          <component>universe</component>
+          <current_version>20.10.12-0ubuntu3</current_version>
+          <cve href="https://ubuntu.com/security/CVE-2020-13401" priority="medium" public="20200602" cvss_score="6.0" cvss_vector="CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:C/C:L/I:L/A:L" cvss_severity="medium" test_ref="oval:com.ubuntu.gke-1.29_jammy:tst:11110000200000">CVE-2020-13401</cve>
+          <cve href="https://ubuntu.com/security/CVE-2021-21284" priority="medium" public="20210202" cvss_score="6.8" cvss_vector="CVSS:3.1/AV:A/AC:L/PR:L/UI:N/S:C/C:N/I:H/A:N" cvss_severity="medium" usns="5032-1,5032-2" test_ref="oval:com.ubuntu.gke-1.29_jammy:tst:11110000200010">CVE-2021-21284</cve>
+          <cve href="https://ubuntu.com/security/CVE-2021-21285" priority="medium" public="20210202" cvss_score="6.5" cvss_vector="CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H" cvss_severity="medium" usns="5032-1,5032-2" test_ref="oval:com.ubuntu.gke-1.29_jammy:tst:11110000200010">CVE-2021-21285</cve>
+          <cve href="https://ubuntu.com/security/CVE-2021-41092" priority="medium" public="20211004" cvss_score="7.5" cvss_vector="CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N" cvss_severity="high" usns="5134-1" test_ref="oval:com.ubuntu.gke-1.29_jammy:tst:11110000200020">CVE-2021-41092</cve>
+        </advisory>
+      </metadata>
+      <criteria>
+        <extend_definition definition_ref="oval:com.ubuntu.gke-1.29_jammy:def:100" comment="Ubuntu 22.04 LTS is installed." applicability_check="true"/>
+        <criteria operator="OR">
+          <criterion test_ref="oval:com.ubuntu.gke-1.29_jammy:tst:11110000200000" comment="(CVE-2020-13401) docker.io package in gke-1.29_jammy, is related to the CVE in some way and has been fixed (note: '19.03.11-0ubuntu1')."/>
+          <criterion test_ref="oval:com.ubuntu.gke-1.29_jammy:tst:11110000200010" comment="(CVE-2021-21284) docker.io package in gke-1.29_jammy, is related to the CVE in some way and has been fixed (note: '20.10.7-0ubuntu1')."/>
+          <criterion test_ref="oval:com.ubuntu.gke-1.29_jammy:tst:11110000200010" comment="(CVE-2021-21285) docker.io package in gke-1.29_jammy, is related to the CVE in some way and has been fixed (note: '20.10.7-0ubuntu1')."/>
+          <criterion test_ref="oval:com.ubuntu.gke-1.29_jammy:tst:11110000200020" comment="(CVE-2021-41092) docker.io package in gke-1.29_jammy, is related to the CVE in some way and has been fixed (note: '20.10.7-0ubuntu7')."/>
+        </criteria>
+      </criteria>
+    </definition>
+    <definition class="vulnerability" id="oval:com.ubuntu.gke-1.29_jammy:def:11110000300000" version="1">
+      <metadata>
+        <title>golang-1.19</title>
+        <reference source="Package" ref_id="golang-1.19" ref_url="https://launchpad.net/ubuntu/+source/golang-1.19"/>
+        <description/>
+        <affected family="unix">
+          <platform>Ubuntu 22.04 LTS</platform>
+        </affected>
+        <advisory>
+          <rights>Copyright (C) 2024 Canonical Ltd.</rights>
+          <component>main</component>
+          <current_version>1.19.2-1ubuntu1</current_version>
+          <cve href="https://ubuntu.com/security/CVE-2022-2879" priority="medium" public="20221014" cvss_score="7.5" cvss_vector="CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H" cvss_severity="high" usns="6038-1,6038-2" test_ref="oval:com.ubuntu.gke-1.29_jammy:tst:11110000300000">CVE-2022-2879</cve>
+          <cve href="https://ubuntu.com/security/CVE-2022-2880" priority="medium" public="20221014" cvss_score="7.5" cvss_vector="CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N" cvss_severity="high" usns="6038-1,6038-2" test_ref="oval:com.ubuntu.gke-1.29_jammy:tst:11110000300000">CVE-2022-2880</cve>
+          <cve href="https://ubuntu.com/security/CVE-2022-41715" priority="medium" public="20221014" cvss_score="7.5" cvss_vector="CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H" cvss_severity="high" usns="6038-1" test_ref="oval:com.ubuntu.gke-1.29_jammy:tst:11110000300000">CVE-2022-41715</cve>
+        </advisory>
+      </metadata>
+      <criteria>
+        <extend_definition definition_ref="oval:com.ubuntu.gke-1.29_jammy:def:100" comment="Ubuntu 22.04 LTS is installed." applicability_check="true"/>
+        <criteria operator="OR">
+          <criterion test_ref="oval:com.ubuntu.gke-1.29_jammy:tst:11110000300000" comment="(CVE-2022-2879) golang-1.19 package in gke-1.29_jammy, is related to the CVE in some way and has been fixed (note: '1.19.2-1')."/>
+          <criterion test_ref="oval:com.ubuntu.gke-1.29_jammy:tst:11110000300000" comment="(CVE-2022-2880) golang-1.19 package in gke-1.29_jammy, is related to the CVE in some way and has been fixed (note: '1.19.2-1')."/>
+          <criterion test_ref="oval:com.ubuntu.gke-1.29_jammy:tst:11110000300000" comment="(CVE-2022-41715) golang-1.19 package in gke-1.29_jammy, is related to the CVE in some way and has been fixed (note: '1.19.2-1')."/>
+        </criteria>
+      </criteria>
+    </definition>
+    <definition class="vulnerability" id="oval:com.ubuntu.gke-1.29_jammy:def:11110000400000" version="1">
+      <metadata>
+        <title>runc</title>
+        <reference source="Package" ref_id="runc" ref_url="https://launchpad.net/ubuntu/+source/runc"/>
+        <description>Open Container Project</description>
+        <affected family="unix">
+          <platform>Ubuntu 22.04 LTS</platform>
+        </affected>
+        <advisory>
+          <rights>Copyright (C) 2024 Canonical Ltd.</rights>
+          <component>main</component>
+          <current_version>1.1.7-0ubuntu1~22.04.2</current_version>
+          <cve href="https://ubuntu.com/security/CVE-2021-43784" priority="low" public="20211206" cvss_score="5.0" cvss_vector="CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:L/I:L/A:L" cvss_severity="medium" usns="6088-2" test_ref="oval:com.ubuntu.gke-1.29_jammy:tst:11110000400000">CVE-2021-43784</cve>
+          <cve href="https://ubuntu.com/security/CVE-2024-21626" priority="high" public="20240131" cvss_score="8.6" cvss_vector="CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:H" cvss_severity="high" usns="6619-1" test_ref="oval:com.ubuntu.gke-1.29_jammy:tst:11110000400010">CVE-2024-21626</cve>
+        </advisory>
+      </metadata>
+      <criteria>
+        <extend_definition definition_ref="oval:com.ubuntu.gke-1.29_jammy:def:100" comment="Ubuntu 22.04 LTS is installed." applicability_check="true"/>
+        <criteria operator="OR">
+          <criterion test_ref="oval:com.ubuntu.gke-1.29_jammy:tst:11110000400000" comment="(CVE-2021-43784) runc package in gke-1.29_jammy, is related to the CVE in some way and has been fixed (note: '1.1.7-0ubuntu1~22.04.1')."/>
+          <criterion test_ref="oval:com.ubuntu.gke-1.29_jammy:tst:11110000400010" comment="(CVE-2024-21626) runc package in gke-1.29_jammy was vulnerable but has been fixed (note: '1.1.7-0ubuntu1~22.04.2')."/>
+        </criteria>
+      </criteria>
+    </definition>
+  </definitions>
+  <tests>
+    <ind-def:family_test id="oval:com.ubuntu.gke-1.29_jammy:tst:100" check="at least one" check_existence="at_least_one_exists" version="1" comment="Is the host part of the unix family?">
+      <ind-def:object object_ref="oval:com.ubuntu.gke-1.29_jammy:obj:100"/>
+      <ind-def:state state_ref="oval:com.ubuntu.gke-1.29_jammy:ste:100"/>
+    </ind-def:family_test>
+    <ind-def:textfilecontent54_test id="oval:com.ubuntu.gke-1.29_jammy:tst:101" check="at least one" check_existence="at_least_one_exists" version="1" comment="Is the host running Ubuntu gke-1.29_jammy?">
+      <ind-def:object object_ref="oval:com.ubuntu.gke-1.29_jammy:obj:101"/>
+      <ind-def:state state_ref="oval:com.ubuntu.gke-1.29_jammy:ste:101"/>
+    </ind-def:textfilecontent54_test>
+    <linux-def:dpkginfo_test id="oval:com.ubuntu.gke-1.29_jammy:tst:11110000100000" version="1" check_existence="at_least_one_exists" check="at least one" comment="Does the 'containerd' package exist and is the version less than '1.4.4-0ubuntu1'?">
+      <linux-def:object object_ref="oval:com.ubuntu.gke-1.29_jammy:obj:11110000100000"/>
+      <linux-def:state state_ref="oval:com.ubuntu.gke-1.29_jammy:ste:11110000100000"/>
+    </linux-def:dpkginfo_test>
+    <linux-def:dpkginfo_test id="oval:com.ubuntu.gke-1.29_jammy:tst:11110000100010" version="1" check_existence="at_least_one_exists" check="at least one" comment="Does the 'containerd' package exist and is the version less than '1.6.12-0ubuntu0~22.04.1~gke1'?">
+      <linux-def:object object_ref="oval:com.ubuntu.gke-1.29_jammy:obj:11110000100000"/>
+      <linux-def:state state_ref="oval:com.ubuntu.gke-1.29_jammy:ste:11110000100010"/>
+    </linux-def:dpkginfo_test>
+    <linux-def:dpkginfo_test id="oval:com.ubuntu.gke-1.29_jammy:tst:11110000100020" version="1" check_existence="at_least_one_exists" check="at least one" comment="Does the 'containerd' package exist and is the version less than '1.6.1-0ubuntu0.4'?">
+      <linux-def:object object_ref="oval:com.ubuntu.gke-1.29_jammy:obj:11110000100000"/>
+      <linux-def:state state_ref="oval:com.ubuntu.gke-1.29_jammy:ste:11110000100020"/>
+    </linux-def:dpkginfo_test>
+    <linux-def:dpkginfo_test id="oval:com.ubuntu.gke-1.29_jammy:tst:11110000200000" version="1" check_existence="at_least_one_exists" check="at least one" comment="Does the 'docker.io' package exist and is the version less than '19.03.11-0ubuntu1'?">
+      <linux-def:object object_ref="oval:com.ubuntu.gke-1.29_jammy:obj:11110000200000"/>
+      <linux-def:state state_ref="oval:com.ubuntu.gke-1.29_jammy:ste:11110000200000"/>
+    </linux-def:dpkginfo_test>
+    <linux-def:dpkginfo_test id="oval:com.ubuntu.gke-1.29_jammy:tst:11110000200010" version="1" check_existence="at_least_one_exists" check="at least one" comment="Does the 'docker.io' package exist and is the version less than '20.10.7-0ubuntu1'?">
+      <linux-def:object object_ref="oval:com.ubuntu.gke-1.29_jammy:obj:11110000200000"/>
+      <linux-def:state state_ref="oval:com.ubuntu.gke-1.29_jammy:ste:11110000200010"/>
+    </linux-def:dpkginfo_test>
+    <linux-def:dpkginfo_test id="oval:com.ubuntu.gke-1.29_jammy:tst:11110000200020" version="1" check_existence="at_least_one_exists" check="at least one" comment="Does the 'docker.io' package exist and is the version less than '20.10.7-0ubuntu7'?">
+      <linux-def:object object_ref="oval:com.ubuntu.gke-1.29_jammy:obj:11110000200000"/>
+      <linux-def:state state_ref="oval:com.ubuntu.gke-1.29_jammy:ste:11110000200020"/>
+    </linux-def:dpkginfo_test>
+    <linux-def:dpkginfo_test id="oval:com.ubuntu.gke-1.29_jammy:tst:11110000300000" version="1" check_existence="at_least_one_exists" check="at least one" comment="Does the 'golang-1.19' package exist and is the version less than '1.19.2-1'?">
+      <linux-def:object object_ref="oval:com.ubuntu.gke-1.29_jammy:obj:11110000300000"/>
+      <linux-def:state state_ref="oval:com.ubuntu.gke-1.29_jammy:ste:11110000300000"/>
+    </linux-def:dpkginfo_test>
+    <linux-def:dpkginfo_test id="oval:com.ubuntu.gke-1.29_jammy:tst:11110000400000" version="1" check_existence="at_least_one_exists" check="at least one" comment="Does the 'runc' package exist and is the version less than '1.1.7-0ubuntu1~22.04.1'?">
+      <linux-def:object object_ref="oval:com.ubuntu.gke-1.29_jammy:obj:11110000400000"/>
+      <linux-def:state state_ref="oval:com.ubuntu.gke-1.29_jammy:ste:11110000400000"/>
+    </linux-def:dpkginfo_test>
+    <linux-def:dpkginfo_test id="oval:com.ubuntu.gke-1.29_jammy:tst:11110000400010" version="1" check_existence="at_least_one_exists" check="at least one" comment="Does the 'runc' package exist and is the version less than '1.1.7-0ubuntu1~22.04.2'?">
+      <linux-def:object object_ref="oval:com.ubuntu.gke-1.29_jammy:obj:11110000400010"/>
+      <linux-def:state state_ref="oval:com.ubuntu.gke-1.29_jammy:ste:11110000400010"/>
+    </linux-def:dpkginfo_test>
+  </tests>
+  <objects>
+    <ind-def:family_object id="oval:com.ubuntu.gke-1.29_jammy:obj:100" version="1" comment="The singleton family object."/>
+    <ind-def:textfilecontent54_object id="oval:com.ubuntu.gke-1.29_jammy:obj:101" version="1" comment="The singleton gke-1.29_jammy object.">
+      <ind-def:filepath>/etc/lsb-release</ind-def:filepath>
+      <ind-def:pattern operation="pattern match">^[\s\S]*DISTRIB_CODENAME=([a-z]+)$</ind-def:pattern>
+      <ind-def:instance datatype="int">1</ind-def:instance>
+    </ind-def:textfilecontent54_object>
+    <unix-def:uname_object id="oval:com.ubuntu.gke-1.29_jammy:obj:11110000000000" version="1" comment="The uname object."/>
+    <linux-def:dpkginfo_object id="oval:com.ubuntu.gke-1.29_jammy:obj:11110000100000" version="1" comment="The 'containerd' package binary">
+      <linux-def:name var_ref="oval:com.ubuntu.gke-1.29_jammy:var:11110000100000" var_check="at least one"/>
+    </linux-def:dpkginfo_object>
+    <linux-def:dpkginfo_object id="oval:com.ubuntu.gke-1.29_jammy:obj:11110000200000" version="1" comment="The 'docker.io' package binary">
+      <linux-def:name var_ref="oval:com.ubuntu.gke-1.29_jammy:var:11110000200000" var_check="at least one"/>
+    </linux-def:dpkginfo_object>
+    <linux-def:dpkginfo_object id="oval:com.ubuntu.gke-1.29_jammy:obj:11110000300000" version="1" comment="The 'golang-1.19' package binaries">
+      <linux-def:name var_ref="oval:com.ubuntu.gke-1.29_jammy:var:11110000300000" var_check="at least one"/>
+    </linux-def:dpkginfo_object>
+    <linux-def:dpkginfo_object id="oval:com.ubuntu.gke-1.29_jammy:obj:11110000400000" version="1" comment="The 'runc' package binary">
+      <linux-def:name var_ref="oval:com.ubuntu.gke-1.29_jammy:var:11110000400000" var_check="at least one"/>
+    </linux-def:dpkginfo_object>
+    <linux-def:dpkginfo_object id="oval:com.ubuntu.gke-1.29_jammy:obj:11110000400010" version="1" comment="The 'runc' package binary">
+      <linux-def:name var_ref="oval:com.ubuntu.gke-1.29_jammy:var:11110000400010" var_check="at least one"/>
+    </linux-def:dpkginfo_object>
+  </objects>
+  <states>
+    <ind-def:family_state id="oval:com.ubuntu.gke-1.29_jammy:ste:100" version="1" comment="The singleton family state.">
+      <ind-def:family>unix</ind-def:family>
+    </ind-def:family_state>
+    <ind-def:textfilecontent54_state id="oval:com.ubuntu.gke-1.29_jammy:ste:101" version="1" comment="The singleton gke-1.29_jammy state.">
+      <ind-def:subexpression>jammy</ind-def:subexpression>
+    </ind-def:textfilecontent54_state>
+    <linux-def:dpkginfo_state id="oval:com.ubuntu.gke-1.29_jammy:ste:11110000100000" version="1" comment="The package version is less than '1.4.4-0ubuntu1'">
+      <linux-def:evr datatype="debian_evr_string" operation="less than">0:1.4.4-0ubuntu1</linux-def:evr>
+    </linux-def:dpkginfo_state>
+    <linux-def:dpkginfo_state id="oval:com.ubuntu.gke-1.29_jammy:ste:11110000100010" version="1" comment="The package version is less than '1.6.12-0ubuntu0~22.04.1~gke1'">
+      <linux-def:evr datatype="debian_evr_string" operation="less than">0:1.6.12-0ubuntu0~22.04.1~gke1</linux-def:evr>
+    </linux-def:dpkginfo_state>
+    <linux-def:dpkginfo_state id="oval:com.ubuntu.gke-1.29_jammy:ste:11110000100020" version="1" comment="The package version is less than '1.6.1-0ubuntu0.4'">
+      <linux-def:evr datatype="debian_evr_string" operation="less than">0:1.6.1-0ubuntu0.4</linux-def:evr>
+    </linux-def:dpkginfo_state>
+    <linux-def:dpkginfo_state id="oval:com.ubuntu.gke-1.29_jammy:ste:11110000200000" version="1" comment="The package version is less than '19.03.11-0ubuntu1'">
+      <linux-def:evr datatype="debian_evr_string" operation="less than">0:19.03.11-0ubuntu1</linux-def:evr>
+    </linux-def:dpkginfo_state>
+    <linux-def:dpkginfo_state id="oval:com.ubuntu.gke-1.29_jammy:ste:11110000200010" version="1" comment="The package version is less than '20.10.7-0ubuntu1'">
+      <linux-def:evr datatype="debian_evr_string" operation="less than">0:20.10.7-0ubuntu1</linux-def:evr>
+    </linux-def:dpkginfo_state>
+    <linux-def:dpkginfo_state id="oval:com.ubuntu.gke-1.29_jammy:ste:11110000200020" version="1" comment="The package version is less than '20.10.7-0ubuntu7'">
+      <linux-def:evr datatype="debian_evr_string" operation="less than">0:20.10.7-0ubuntu7</linux-def:evr>
+    </linux-def:dpkginfo_state>
+    <linux-def:dpkginfo_state id="oval:com.ubuntu.gke-1.29_jammy:ste:11110000300000" version="1" comment="The package version is less than '1.19.2-1'">
+      <linux-def:evr datatype="debian_evr_string" operation="less than">0:1.19.2-1</linux-def:evr>
+    </linux-def:dpkginfo_state>
+    <linux-def:dpkginfo_state id="oval:com.ubuntu.gke-1.29_jammy:ste:11110000400000" version="1" comment="The package version is less than '1.1.7-0ubuntu1~22.04.1'">
+      <linux-def:evr datatype="debian_evr_string" operation="less than">0:1.1.7-0ubuntu1~22.04.1</linux-def:evr>
+    </linux-def:dpkginfo_state>
+    <linux-def:dpkginfo_state id="oval:com.ubuntu.gke-1.29_jammy:ste:11110000400010" version="1" comment="The package version is less than '1.1.7-0ubuntu1~22.04.2'">
+      <linux-def:evr datatype="debian_evr_string" operation="less than">0:1.1.7-0ubuntu1~22.04.2</linux-def:evr>
+    </linux-def:dpkginfo_state>
+  </states>
+  <variables>
+    <local_variable id="oval:com.ubuntu.gke-1.29_jammy:var:11110000000000" version="1" datatype="debian_evr_string" comment="Kernel version in evr format">
+      <concat>
+        <literal_component>0:</literal_component>
+        <regex_capture pattern="^([\d|\.]+-\d+)[-|\w]+$">
+          <object_component object_ref="oval:com.ubuntu.gke-1.29_jammy:obj:11110000000000" item_field="os_release"/>
+        </regex_capture>
+      </concat>
+    </local_variable>
+    <constant_variable id="oval:com.ubuntu.gke-1.29_jammy:var:11110000100000" version="1" datatype="string" comment="The 'containerd' package binary">
+      <value>containerd</value>
+    </constant_variable>
+    <constant_variable id="oval:com.ubuntu.gke-1.29_jammy:var:11110000200000" version="1" datatype="string" comment="The 'docker.io' package binary">
+      <value>docker.io</value>
+    </constant_variable>
+    <constant_variable id="oval:com.ubuntu.gke-1.29_jammy:var:11110000300000" version="1" datatype="string" comment="The 'golang-1.19' package binaries">
+      <value>golang-1.19</value>
+      <value>golang-1.19-go</value>
+      <value>golang-1.19-src</value>
+    </constant_variable>
+    <constant_variable id="oval:com.ubuntu.gke-1.29_jammy:var:11110000400000" version="1" datatype="string" comment="The 'runc' package binary">
+      <value>runc</value>
+    </constant_variable>
+    <constant_variable id="oval:com.ubuntu.gke-1.29_jammy:var:11110000400010" version="1" datatype="string" comment="The 'runc' package binary">
+      <value>runc</value>
+    </constant_variable>
+  </variables>
+</oval_definitions>
